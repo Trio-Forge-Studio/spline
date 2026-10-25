@@ -181,7 +181,7 @@ Install Node dependencies with `pnpm install`. Install Lune and StyLua with `rok
 ```sh
 pnpm run check
 pnpm run test
-node scripts/check-snippets.mjs README.md
+pnpm run examples README.md
 npm pack --dry-run
 ```
 
