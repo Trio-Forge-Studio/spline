@@ -4,9 +4,7 @@
 
 ## Checks
 
-Install dependencies with `pnpm install`. Install Lune and StyLua with `rokit install`.
-
-Run `pnpm run check` before calling a change complete. It checks formatting, compiles with rbxtsc, runs the Luau behavior tests against the compiled package, and compiles and runs the README examples. Fix the cause of failures.
+Run `pnpm run check` before calling a change complete. It compiles with rbxtsc, runs the Luau behavior tests against the compiled package, and compiles and runs the README examples. Fix the cause of failures.
 
 `node scripts/check-snippets.mjs <files>` checks TypeScript examples in Markdown and MDX. Each `// → text` line declares expected output. Blocks with `group=<name>` share the earlier code in that group.
 
