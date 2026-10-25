@@ -1,6 +1,3 @@
--- Loads compiled roblox-ts output through roblox-ts's runtime, the way a place requires a package from
--- rbxts_include: the folder becomes instances beside the runtime's RuntimeLib and Promise. Returns the module at
--- path under the folder, or the folder itself, which out/'s init.luau makes a ModuleScript.
 local fs = require("@lune/fs")
 local luau = require("@lune/luau")
 local task = require("@lune/task")

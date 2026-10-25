@@ -1,5 +1,3 @@
--- Runs every spec in test/ against the compiled package in out/. Build it first with `pnpm run build`.
--- Pass names to run only the specs or tests whose name contains one of them.
 local fs = require("@lune/fs")
 local process = require("@lune/process")
 
