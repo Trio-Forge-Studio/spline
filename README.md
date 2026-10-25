@@ -108,7 +108,7 @@ Call this conversion with the current elapsed time on each update. `length()` re
 
 ## Orient along a path
 
-`frameAt` returns a point, a unit tangent, and a unit normal. Spatial frames minimize rotation along the path. Set `initialNormal` to choose the starting roll. The default prefers world up.
+`frameAt` returns a point, a unit tangent, and a unit normal. Spatial frames minimize rotation along the path. Set `initialNormal` to choose the starting roll. By default the first normal points toward world up. If the path starts straight up or down, or `initialNormal` is zero or parallel to the tangent, it falls back to the world axis least aligned with the tangent.
 
 This matrix points the object's local negative Z axis along the tangent. Its local Y axis follows the normal.
 
@@ -149,7 +149,7 @@ print(math.abs(ahead.X - 6) < 0.001);
 
 ## Close a loop
 
-Set `closed` to wrap parameters and distances. Do not repeat the first point at the end. Catmull-Rom needs at least three points after adjacent duplicates coalesce, unless the loop is constant. Closed B-splines need at least three controls. Closed Beziers need `3n` controls, with the last two handles leading back to the first anchor.
+Set `closed` to wrap parameters and distances. Do not repeat the first point at the end. Catmull-Rom drops a repeated last point, but Bezier and B-spline curves count it as another control, which changes the shape or fails the control count. Catmull-Rom needs at least three points after adjacent duplicates coalesce, unless the loop is constant. Closed B-splines need at least three controls. Closed Beziers need `3n` controls, with the last two handles leading back to the first anchor.
 
 ```ts
 import { catmullRom } from "@trioforge/spline";
