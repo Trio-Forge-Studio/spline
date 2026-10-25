@@ -25,8 +25,8 @@ Run `npm pack --dry-run` after packaging changes. The package contains only `out
 Releases publish through CI. Update `version` in `package.json` in a PR and merge it. With release authorization, tag that commit on `main` and push the tag with an explicit refspec.
 
 ```sh
-git tag v0.2.0 origin/main
-git push origin refs/tags/v0.2.0
+git tag spline-v0.2.0 origin/main
+git push origin refs/tags/spline-v0.2.0
 ```
 
-`.github/workflows/release.yml` rejects tags outside `main` or tags that do not match the package version. It runs `pnpm run check`, then publishes through npm trusted publishing with provenance. Do not publish from a local machine.
+The repository's `.github/workflows/release.yml` rejects tags outside `main` or tags that do not match the package version. It runs `pnpm run check`, then publishes through npm trusted publishing with provenance. Do not publish from a local machine.

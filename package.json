@@ -11,10 +11,11 @@
 		"b-spline"
 	],
 	"homepage": "https://website.trio-forge.workers.dev/spline/",
-	"bugs": "https://github.com/Trio-Forge-Studio/spline/issues",
+	"bugs": "https://github.com/Trio-Forge-Studio/packages/issues",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/Trio-Forge-Studio/spline.git"
+		"url": "git+https://github.com/Trio-Forge-Studio/packages.git",
+		"directory": "packages/spline"
 	},
 	"license": "MIT",
 	"main": "out/init.luau",
@@ -25,7 +26,6 @@
 		"README.md",
 		"LICENSE"
 	],
-	"packageManager": "pnpm@12.15.0",
 	"publishConfig": {
 		"access": "public"
 	},
