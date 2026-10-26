@@ -7,6 +7,8 @@
 //
 //   check-examples [--run] [--types <file>] <markdown files...>
 
+import { cliPath } from "@trioforge/rbxts-native";
+
 import { execFileSync, spawnSync } from "node:child_process";
 import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { basename, join, relative, resolve } from "node:path";
@@ -89,8 +91,7 @@ writeFileSync(
 );
 
 const where = (example, row = 1) => `${relative(process.cwd(), example.file)}:${example.line + row - 1}`;
-const rbxtsc = join(root, "node_modules", "roblox-ts", "out", "CLI", "cli.js");
-const compiled = spawnSync(process.execPath, [rbxtsc, "--type", "package", "-p", project], { encoding: "utf8" });
+const compiled = spawnSync(process.execPath, [cliPath, "--type", "package", "-p", project], { encoding: "utf8" });
 const output = stripVTControlCharacters(compiled.stdout + compiled.stderr);
 for (const row of output.split(/\r?\n/).filter(Boolean)) {
 	const match = /(?:^|[/])([^/:]+\.tsx?):(\d+):(\d+) - (.*)$/.exec(row);

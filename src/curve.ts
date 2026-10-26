@@ -1,3 +1,4 @@
+//!native
 export type CurveVector = Vector2 | Vector3;
 
 export interface CurveFrame<V extends CurveVector> {
