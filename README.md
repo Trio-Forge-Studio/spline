@@ -127,6 +127,19 @@ if (frame !== undefined) {
 
 `tangentAt` and `frameAt` return `undefined` at stationary points. For `Vector2` curves, the normal is the tangent's left perpendicular. Frames build their spatial lookup table on first use.
 
+## Build tables ahead
+
+Distances, spatial frames, and `closest` each build a lookup table on first use. A long curve can take a moment to build them, so a first query in the middle of a cutscene can hitch. Call `prepare()` while loading to build every table up front. Answers stay the same.
+
+```ts
+import { catmullRom } from "@trioforge/spline";
+
+const track = catmullRom([new Vector3(0, 0, 0), new Vector3(40, 0, 10), new Vector3(80, 5, 0)]);
+track.prepare();
+print(track.length() > 80);
+// → true
+```
+
 ## Snap to a path
 
 `closest` searches the whole curve. Its `distance` is the distance along the curve. Its `separation` is the straight-line gap to your query.
@@ -181,11 +194,12 @@ Install Node dependencies with `pnpm install`. Install Lune and StyLua with `rok
 ```sh
 pnpm run check
 pnpm run test
+pnpm run bench
 pnpm run examples README.md
 npm pack --dry-run
 ```
 
-`check` runs oxfmt, rbxtsc, StyLua, the behavior tests, and every TypeScript example in this README. Tests load the compiled package in `out/` through roblox-ts's runtime. They compare behavior against dense sampling and hand-computed references. See [AGENTS.md](AGENTS.md) for contributor rules.
+`check` runs oxfmt, rbxtsc, StyLua, the behavior tests, and every TypeScript example in this README. Tests load the compiled package in `out/` through roblox-ts's runtime. They compare behavior against dense sampling and hand-computed references. `bench` times the queries in Lune. Lune's vectors are slower than Roblox's, so compare runs with each other. See [AGENTS.md](AGENTS.md) for contributor rules.
 
 ## License
 
