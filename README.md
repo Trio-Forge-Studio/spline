@@ -2,7 +2,7 @@
 
 Catmull-Rom, cubic Bezier, and uniform B-spline curves for roblox-ts. Use `Vector2` or `Vector3` points to sample positions, travel by distance, orient objects, and find the closest point on a path.
 
-Read the documentation at <https://website.trio-forge.workers.dev/spline/>.
+Read the documentation at <https://website.trio-forge.workers.dev/docs/spline/>.
 
 ## Install
 
