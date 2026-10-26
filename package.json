@@ -1,6 +1,6 @@
 {
 	"name": "@trioforge/spline",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "Catmull-Rom, cubic Bezier, and uniform B-spline curves for roblox-ts",
 	"keywords": [
 		"roblox",
