@@ -1,5 +1,11 @@
 # @trioforge/spline
 
+## 0.2.0
+
+### Minor Changes
+
+- [#3](https://github.com/Trio-Forge-Studio/spline/pull/3) [`558b984`](https://github.com/Trio-Forge-Studio/spline/commit/558b984d72d4256b7de741ff09b8f20d68973388) Thanks [@Hezaerd](https://github.com/Hezaerd)! - Add `prepare()` to build a curve's lookup tables ahead of its first query. Distance, frame, and closest-point queries run faster: arc length integrates a per-span speed polynomial, distance inversion starts from a Hermite guess, closed frames no longer measure the curve, and `closest` searches a box tree with a tighter bound and polishes across span joints.
+
 ## 0.1.2
 
 ### Patch Changes
