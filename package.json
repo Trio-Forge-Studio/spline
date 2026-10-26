@@ -32,6 +32,7 @@
 	"scripts": {
 		"build": "rbxtsc --type package",
 		"test": "rbxtsc --type package && lune run test",
+		"bench": "rbxtsc --type package && lune run bench",
 		"check": "vp check && stylua --check test .lune && rbxtsc --type package && lune run test && pnpm run examples README.md",
 		"prepack": "rbxtsc --type package",
 		"examples": "node tooling/check-examples.mjs --run",

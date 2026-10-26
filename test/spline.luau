@@ -384,6 +384,17 @@ return {
 		end
 		assert(curve.closest(v3(4, 1.3, 0)).point.Y > 1, "the upper arm wins")
 	end,
+	["closest reaches just past a joint"] = function()
+		local loop = Spline.catmullRom(circle(60, 100), { closed = true })
+		for joint = 0, 59, 3 do
+			local parameter = joint / 60 + 1e-4
+			local frame = loop.frameAt(parameter)
+			-- The normal is perpendicular to the tangent, so its foot on the loop is the closest point.
+			local found = loop.closest(frame.point + frame.normal * 15)
+			close(found.parameter, parameter, 2e-5, `past joint {joint}`)
+			close(found.separation, 15, 2e-5, `gap past joint {joint}`)
+		end
+	end,
 	["a point on the curve projects onto itself"] = function()
 		local curve = Spline.catmullRom(WIGGLE)
 		for step = 0, 20 do
@@ -396,12 +407,30 @@ return {
 		local loop = Spline.catmullRom(circle(5, 10), { closed = true })
 		assert(loop.closest(loop.pointAt(0)).parameter == 0, "the seam projects to parameter 0")
 	end,
+	["prepare builds the tables without changing answers"] = function()
+		local points = { v3(10, 0, 0), v3(0, 10, 0), v3(-10, 0, 0), v3(0, 0, 10), v3(0, -10, 5) }
+		local lazy = Spline.catmullRom(points, { closed = true })
+		local ready = Spline.catmullRom(points, { closed = true })
+		ready.prepare()
+		ready.prepare()
+		assert(ready.length() == lazy.length(), "the same length")
+		for step = 0, 20 do
+			local parameter = step / 20
+			assert(ready.frameAt(parameter).normal == lazy.frameAt(parameter).normal, `the same frame at {parameter}`)
+			assert(ready.parameterAtDistance(step) == lazy.parameterAtDistance(step), `the same inversion at {step}`)
+		end
+		local query = v3(3, 4, 5)
+		assert(ready.closest(query).point == lazy.closest(query).point, "the same projection")
+		Spline.catmullRom({ Vector2.new(0, 0), Vector2.new(4, 3) }).prepare()
+		Spline.catmullRom({ v3(1, 2, 3) }).prepare()
+	end,
 	["a curve frozen before its first query still answers"] = function()
 		local curve = table.freeze(Spline.catmullRom({ v3(0, 0, 0), v3(10, 0, 0), v3(10, 5, 5) }, { closed = true }))
 		local holder = table.freeze({ curve = curve })
 		assert(holder.curve.length() > 0, "length builds its table")
 		assert(holder.curve.frameAt(0.3) ~= nil, "frames build their table")
 		assert(holder.curve.closest(v3(5, 1, 0)).separation < 2, "projection measures distance")
+		table.freeze(Spline.cubicBezier({ v3(0, 0, 0), v3(1, 2, 0), v3(3, 2, 0), v3(4, 0, 0) })).prepare()
 		local evaluate = holder.curve.pointAt
 		assert(evaluate(0) == v3(0, 0, 0), "a detached property still works")
 	end,
