@@ -2,7 +2,7 @@
 
 Catmull-Rom, cubic Bezier, and uniform B-spline curves for roblox-ts. Use `Vector2` or `Vector3` points to sample positions, travel by distance, orient objects, and find the closest point on a path.
 
-Read the documentation at <https://website.trio-forge.workers.dev/docs/spline/>.
+The documentation is at <https://website.trio-forge.workers.dev/docs/spline/>.
 
 ## Install
 
@@ -10,7 +10,7 @@ Read the documentation at <https://website.trio-forge.workers.dev/docs/spline/>.
 pnpm add @trioforge/spline
 ```
 
-roblox-ts looks for packages in the scopes your project lists. Add `@trioforge` in two places.
+roblox-ts only finds packages in the scopes your project lists, so you need to add `@trioforge` in two places.
 
 1. In `tsconfig.json`, add it to `typeRoots`.
 
@@ -30,7 +30,7 @@ roblox-ts looks for packages in the scopes your project lists. Add `@trioforge` 
 
 ## Quickstart
 
-Create a path through three points and sample its middle joint.
+This example builds a path through three points and samples it at the middle point.
 
 ```ts
 import { catmullRom } from "@trioforge/spline";
@@ -40,15 +40,15 @@ print(path.pointAt(0.5).Y);
 // → 5
 ```
 
-Parameters run from 0 to 1. Each span gets an equal share of that range. Equal parameter steps need not cover equal distances. Open curves clamp parameters and distances at their ends.
+Parameters run from 0 to 1, and each span gets an equal share of that range, so equal parameter steps don't always cover equal distances. An open curve clamps parameters and distances at its ends.
 
-All curve functions are arrow properties. Luau callers use `.`, such as `path.pointAt(0.5)` and `path.length()`. You can detach these functions without binding a receiver.
+Every curve function is an arrow property, so Luau callers use `.`, as in `path.pointAt(0.5)` and `path.length()`. You can also pass these functions around on their own without binding them to the curve.
 
 ## Choose a curve
 
 ### Catmull-Rom
 
-`catmullRom` passes through its points. `alpha` controls the knot spacing. The default is centripetal, `0.5`. Use `0` for uniform spacing or `1` for chordal spacing.
+`catmullRom` passes through every point you give it. `alpha` sets the knot spacing. The default, `0.5`, is centripetal. Use `0` for uniform spacing or `1` for chordal spacing.
 
 ```ts
 import { catmullRom } from "@trioforge/spline";
@@ -58,11 +58,11 @@ print(path.pointAt(0.5).Y);
 // → 8
 ```
 
-Adjacent duplicate points coalesce. A single point makes a constant curve with zero length.
+Consecutive copies of the same point count as one, and a single point makes a constant curve with zero length.
 
 ### Cubic Bezier
 
-`cubicBezier` uses an anchor, two handles, and an anchor for each span. Open curves need `3n + 1` controls. Adjacent spans share their anchor.
+Each `cubicBezier` span is an anchor, two handles, and another anchor. Neighboring spans share the anchor between them, so an open curve needs `3n + 1` controls.
 
 ```ts
 import { cubicBezier } from "@trioforge/spline";
@@ -74,7 +74,7 @@ print(path.pointAt(0.5).Y);
 
 ### Uniform B-spline
 
-`uniformBSpline` approximates its controls. An open curve needs at least four controls and usually does not pass through its endpoints.
+`uniformBSpline` approximates its controls. An open curve needs at least four controls and usually doesn't reach its endpoints.
 
 ```ts
 import { uniformBSpline } from "@trioforge/spline";
@@ -88,7 +88,7 @@ print(path.pointAt(1).X);
 
 ## Move at an even speed
 
-Convert elapsed time to a distance in studs. Pass that distance to `parameterAtDistance` before sampling. The distance table builds on its first use and stays cached.
+To move at a steady speed, turn the elapsed time into a distance in studs and pass it to `parameterAtDistance` before you sample. The curve builds its distance table the first time you ask and keeps it.
 
 ```ts
 import { cubicBezier } from "@trioforge/spline";
@@ -104,13 +104,13 @@ print(math.abs(path.distanceAtParameter(parameter) - 5) < 0.001);
 // → true
 ```
 
-Call this conversion with the current elapsed time on each update. `length()` returns the total distance along the curve.
+Run this conversion with the current elapsed time on every update. `length()` returns the total distance along the curve.
 
 ## Orient along a path
 
-`frameAt` returns a point, a unit tangent, and a unit normal. Spatial frames minimize rotation along the path. Set `initialNormal` to choose the starting roll. By default the first normal points toward world up. If the path starts straight up or down, or `initialNormal` is zero or parallel to the tangent, it falls back to the world axis least aligned with the tangent.
+`frameAt` returns a point, a unit tangent, and a unit normal. On `Vector3` curves the frames twist as little as possible along the path. The first normal points toward world up unless you set `initialNormal` to choose the starting roll. If the path starts straight up or down, or `initialNormal` is zero or parallel to the tangent, the curve uses the world axis least aligned with the tangent instead.
 
-This matrix points the object's local negative Z axis along the tangent. Its local Y axis follows the normal.
+This matrix points the object's local negative Z axis along the tangent and its local Y axis along the normal.
 
 ```ts
 import { catmullRom } from "@trioforge/spline";
@@ -125,11 +125,11 @@ if (frame !== undefined) {
 }
 ```
 
-`tangentAt` and `frameAt` return `undefined` at stationary points. For `Vector2` curves, the normal is the tangent's left perpendicular. Frames build their spatial lookup table on first use.
+`tangentAt` and `frameAt` return `undefined` at stationary points, where the curve has no direction. On a `Vector2` curve, the normal is the tangent turned a quarter to the left. On a `Vector3` curve, the first frame query builds the frame lookup table.
 
 ## Build tables ahead
 
-Distances, spatial frames, and `closest` each build a lookup table on first use. A long curve can take a moment to build them, so a first query in the middle of a cutscene can hitch. Call `prepare()` while loading to build every table up front. Answers stay the same.
+Distances, spatial frames, and `closest` each build a lookup table the first time you use them. On a long curve, building them can take a moment, so a first query in the middle of a cutscene can hitch. Call `prepare()` while the game loads to build every table up front. It doesn't change any answer.
 
 ```ts
 import { catmullRom } from "@trioforge/spline";
@@ -142,7 +142,7 @@ print(track.length() > 80);
 
 ## Snap to a path
 
-`closest` searches the whole curve. Its `distance` is the distance along the curve. Its `separation` is the straight-line gap to your query.
+`closest` searches the whole curve. In its result, `distance` is how far along the curve the closest point is, and `separation` is the straight-line gap between that point and the one you passed.
 
 ```ts
 import { catmullRom } from "@trioforge/spline";
@@ -158,11 +158,11 @@ print(math.abs(ahead.X - 6) < 0.001);
 // → true
 ```
 
-`CurveProjection` also returns the `parameter` at the closest point.
+The result, a `CurveProjection`, also has the `parameter` at the closest point.
 
 ## Close a loop
 
-Set `closed` to wrap parameters and distances. Do not repeat the first point at the end. Catmull-Rom drops a repeated last point, but Bezier and B-spline curves count it as another control, which changes the shape or fails the control count. Catmull-Rom needs at least three points after adjacent duplicates coalesce, unless the loop is constant. Closed B-splines need at least three controls. Closed Beziers need `3n` controls, with the last two handles leading back to the first anchor.
+Set `closed` to make parameters and distances wrap around. Don't repeat the first point at the end. Catmull-Rom drops a repeated last point, but Bezier and B-spline curves count it as one more control, which either changes the shape or fails the control count. A closed Catmull-Rom needs at least three points after consecutive copies count as one, unless every point is the same. A closed B-spline needs at least three controls. A closed Bezier needs `3n` controls, with the last two handles leading back to the first anchor.
 
 ```ts
 import { catmullRom } from "@trioforge/spline";
@@ -179,17 +179,17 @@ print(loop.parameterAtDistance(loop.length()));
 // → 0
 ```
 
-Closed spatial frames distribute their roll correction along the loop to meet at the seam. Bezier handles determine whether a join's tangent is continuous.
+On a closed `Vector3` curve, the frames spread their roll correction along the loop so they meet at the seam. On a Bezier, the handles decide whether the tangent is continuous across a join.
 
 ## Types and validation
 
-The package exports `Curve`, `CurveFrame`, `CurveProjection`, `CurveOptions`, `CatmullRomOptions`, and `CurveVector`. A curve preserves its input dimension. `initialNormal` applies only to `Vector3` curves.
+The package exports `Curve`, `CurveFrame`, `CurveProjection`, `CurveOptions`, `CatmullRomOptions`, and `CurveVector`. A curve keeps the dimension of its points, and `initialNormal` applies only to `Vector3` curves.
 
-Constructors reject empty inputs, mixed dimensions, non-finite points, invalid control counts, and `alpha` values outside 0 to 1. Queries reject non-finite parameters, distances, and points.
+The constructors reject empty inputs, mixed dimensions, non-finite points, wrong control counts, and an `alpha` outside 0 to 1. Queries reject a non-finite parameter, distance, or point.
 
 ## Development
 
-Install Node dependencies with `pnpm install`. Install Lune and StyLua with `rokit install`.
+Install the Node tools with `pnpm install`, and Lune and StyLua with `rokit install`.
 
 ```sh
 pnpm run check
@@ -199,7 +199,7 @@ pnpm run examples README.md
 npm pack --dry-run
 ```
 
-`check` runs oxfmt, rbxtsc, StyLua, the behavior tests, and every TypeScript example in this README. Tests load the compiled package in `out/` through roblox-ts's runtime. They compare behavior against dense sampling and hand-computed references. `bench` times the queries in Lune. Lune's vectors are slower than Roblox's, so compare runs with each other. See [AGENTS.md](AGENTS.md) for contributor rules.
+`check` runs oxfmt, rbxtsc, StyLua, the behavior tests, and every TypeScript example in this README. The tests load the compiled package from `out/` through the roblox-ts runtime and compare its results with dense sampling and hand-computed values. `bench` times the queries in Lune. Lune's vectors are slower than Roblox's, so compare bench runs with each other, not with Roblox. See [AGENTS.md](AGENTS.md) for contributor rules.
 
 ## License
 
