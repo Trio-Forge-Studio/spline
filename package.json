@@ -35,7 +35,7 @@
 		"bench": "rbxtsc --type package && lune run bench",
 		"check": "vp check && stylua --check test .lune && rbxtsc --type package && lune run test && pnpm run examples README.md",
 		"prepack": "rbxtsc --type package",
-		"examples": "node tooling/check-examples.mjs --run",
+		"examples": "check-examples --run",
 		"fmt": "vp fmt",
 		"prepare": "vp config",
 		"changeset": "changeset"
@@ -45,6 +45,7 @@
 		"@changesets/cli": "3.0.3",
 		"@rbxts/compiler-types": "3.0.0-types.0",
 		"@rbxts/types": "1.0.959",
+		"@trioforge/tooling": "0.1.0",
 		"roblox-ts": "3.0.0",
 		"typescript": "5.5.3",
 		"vite-plus": "1.3.0"
